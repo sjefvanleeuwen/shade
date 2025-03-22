@@ -11,7 +11,15 @@ export class Entity {
     }
     
     addComponent(type, properties = {}) {
-        // Create specific component instances based on type
+        // First check if the engine has a component factory for this type
+        if (this.scene.engine.componentFactories && this.scene.engine.componentFactories.has(type)) {
+            const factory = this.scene.engine.componentFactories.get(type);
+            const component = factory(this, properties);
+            this.components.set(type, component);
+            return component;
+        }
+        
+        // If no factory exists, create specific component instances based on type
         let component;
         
         switch (type) {
